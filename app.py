@@ -177,7 +177,7 @@ class FileSorter(QWidget):
             ".ttf", ".otf", ".woff", ".woff2", ".eot", ".pfb", ".pfm", ".afm", ".dfont", 
             ".ttc", ".fon", ".bmf"
         ],
-        "3D_CAD": [
+        "3D": [
             ".obj", ".fbx", ".stl", ".dae", ".3ds", ".blend", ".max", ".ma", ".mb", 
             ".ply", ".gltf", ".glb", ".abc", ".usdz", ".usd", ".x3d", ".wrl", ".vrml", 
             ".lwo", ".lws", ".lxo", ".c4d", ".zpr", ".ztl", ".skp",
@@ -224,9 +224,9 @@ class FileSorter(QWidget):
                     "CODE": "Code",
                     "DISK_IMAGES": "Disk Images",
                     "FONTS": "Fonts",
-                    "3D_CAD": "3D & CAD",
+                    "3D": "3D",
                     "DATABASE": "Database",
-                    "SCIENTIFIC_GIS": "Scientific",
+                    "SCIENTIFIC": "Scientific",
                     "SYSTEM": "System"
                 }
             },
@@ -247,9 +247,9 @@ class FileSorter(QWidget):
                     "CODE": "Kódok",
                     "DISK_IMAGES": "Lemezképek",
                     "FONTS": "Betűtípusok",
-                    "3D_CAD": "3D és CAD",
+                    "3D": "3D",
                     "DATABASE": "Adatbázisok",
-                    "SCIENTIFIC_GIS": "Tudományos",
+                    "SCIENTIFIC": "Tudományos",
                     "SYSTEM": "Rendszerfájlok"
                 }
             }
