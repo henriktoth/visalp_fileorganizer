@@ -1,9 +1,23 @@
 import sys
 import os
 import shutil
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLineEdit, QHBoxLayout, QMessageBox, QLabel, QMenuBar
+import json
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLineEdit, QHBoxLayout, QMessageBox, QLabel, QMenuBar, QTextEdit, QComboBox, QCheckBox, QDialog
 from PyQt6.QtGui import QAction, QIcon, QPixmap, QActionGroup
-from PyQt6.QtCore import Qt, QEvent, QSize
+from PyQt6.QtCore import Qt, QEvent, QSize, QStandardPaths
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, relative_path)
+
+def get_settings_path():
+    config_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppConfigLocation)
+    if not os.path.exists(config_dir):
+        os.makedirs(config_dir)
+    return os.path.join(config_dir, 'settings.json')
 
 STYLE_SHEET = """
 /* --- Global Styles --- */
@@ -96,7 +110,146 @@ QMessageBox QPushButton:hover {
 QMessageBox QPushButton:pressed {
     background-color: #E0E0E0;
 }
+
+/* --- Checkbox Styling --- */
+QCheckBox {
+    font-weight: 300;
+    background-color: transparent;
+    spacing: 8px;
+}
 """
+
+class EULAWindow(QDialog):
+    def __init__(self, view_only=False):
+        super().__init__()
+        self.view_only = view_only
+        self.setWindowTitle("End User License Agreement")
+        self.setFixedSize(500, 400)
+        
+        layout = QVBoxLayout(self)
+        
+        self.eula_text = QTextEdit()
+        self.eula_text.setReadOnly(True)
+        layout.addWidget(self.eula_text)
+        
+        self.lang_combo = QComboBox()
+        self.lang_combo.addItems(["English", "Magyar"])
+        self.lang_combo.currentIndexChanged.connect(self.change_language)
+        layout.addWidget(self.lang_combo)
+        
+        if not self.view_only:
+            self.agree_check = QCheckBox("I agree to the EULA")
+            self.agree_check.stateChanged.connect(self.toggle_next_btn)
+            layout.addWidget(self.agree_check)
+        
+        btn_layout = QHBoxLayout()
+        
+        if not self.view_only:
+            self.btn_cancel = QPushButton("Cancel")
+            self.btn_cancel.clicked.connect(self.close_app)
+            btn_layout.addWidget(self.btn_cancel)
+            
+            self.btn_next = QPushButton("Next")
+            self.btn_next.setEnabled(False)
+            self.btn_next.clicked.connect(self.accept_eula)
+            btn_layout.addWidget(self.btn_next)
+        else:
+            self.btn_close = QPushButton("Close")
+            self.btn_close.clicked.connect(self.accept)
+            btn_layout.addWidget(self.btn_close)
+        
+        layout.addLayout(btn_layout)
+        
+        self.load_eula_text('en')
+        
+    def change_language(self, index):
+        if index == 0:
+            self.load_eula_text('en')
+            if not self.view_only:
+                self.agree_check.setText("I agree to the EULA")
+                self.btn_cancel.setText("Cancel")
+                self.btn_next.setText("Next")
+            else:
+                self.btn_close.setText("Close")
+        else:
+            self.load_eula_text('hu')
+            if not self.view_only:
+                self.agree_check.setText("Elfogadom a feltételeket")
+                self.btn_cancel.setText("Mégse")
+                self.btn_next.setText("Tovább")
+            else:
+                self.btn_close.setText("Bezárás")
+            
+    def load_eula_text(self, lang):
+        filename = 'eula_en.txt' if lang == 'en' else 'eula_hu.txt'
+        path = resource_path(filename)
+        if os.path.exists(path):
+            with open(path, 'r', encoding='utf-8') as f:
+                self.eula_text.setText(f.read())
+        else:
+            self.eula_text.setText("EULA file not found.")
+
+    def toggle_next_btn(self):
+        self.btn_next.setEnabled(self.agree_check.isChecked())
+        
+    def close_app(self):
+        self.reject()
+        
+    def accept_eula(self):
+        settings_path = get_settings_path()
+        settings = {}
+        if os.path.exists(settings_path):
+            with open(settings_path, 'r') as f:
+                try:
+                    settings = json.load(f)
+                except json.JSONDecodeError:
+                    pass
+        
+        settings['eula_accepted'] = True
+        
+        with open(settings_path, 'w') as f:
+            json.dump(settings, f, indent=4)
+            
+        self.accept()
+
+class AboutWindow(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("About FileOrganizer")
+        self.setFixedSize(400, 400)
+        self.setStyleSheet("background-color: #FFFFFF;")
+
+        layout = QVBoxLayout(self)
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.setSpacing(10)
+
+        logo_label = QLabel()
+        logo_path = resource_path('fileorganizer_logo.svg')
+        if os.path.exists(logo_path):
+            pixmap = QPixmap(logo_path)
+            pixmap = pixmap.scaledToWidth(120, Qt.TransformationMode.SmoothTransformation)
+            logo_label.setPixmap(pixmap)
+        logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(logo_label)
+
+        name_logo_label = QLabel()
+        name_logo_path = resource_path('fileorganizer_name_logo.png')
+        if os.path.exists(name_logo_path):
+            pixmap = QPixmap(name_logo_path)
+            pixmap = pixmap.scaledToWidth(180, Qt.TransformationMode.SmoothTransformation)
+            name_logo_label.setPixmap(pixmap)
+        name_logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(name_logo_label)
+
+        version_label = QLabel("version: 1.0")
+        version_label.setStyleSheet("font-size: 14px; color: #333; margin-top: 10px;")
+        version_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(version_label)
+
+        copyright_label = QLabel("(C) - VISALP - 2025.")
+        copyright_label.setStyleSheet("font-size: 12px; color: #666;")
+        copyright_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(copyright_label)
 
 class FileSorter(QWidget):
     
@@ -111,7 +264,7 @@ class FileSorter(QWidget):
             ".cr2", ".cr3", ".nef", ".nrw", ".arw", ".srf", ".sr2", ".orf", ".rw2", 
             ".raf", ".pef", ".srw", ".x3f", ".erf", ".mef", ".mos", ".dcs", ".dcr", 
             ".drf", ".k25", ".kdc", ".dng", ".3fr", ".ari", ".bay", ".cap", ".iiq", 
-            ".eip", ".fff"
+            ".eip", ".fff", ".icns", ".af", ".afdesign"
         ],
         "DOCUMENTS": [
             ".txt", ".md", ".markdown", ".rtf", ".tex", ".ltx", ".rst", ".adoc", 
@@ -214,6 +367,13 @@ class FileSorter(QWidget):
                 'confirm_title': "Confirmation",
                 'confirm_sort': "Are you sure you want to sort the files in this directory?",
                 'confirm_revert': "Are you sure you want to revert folder changes in this directory?",
+                'chk_unknown': "Create UNKNOWN folder",
+                'chk_folders': "Create FOLDERS folder",
+                'menu_language': "Language",
+                'menu_settings': "Settings",
+                'menu_about': "About",
+                'menu_eula': "End User License Agreement (EULA)",
+                'menu_about_app': "About FileOrganizer",
                 'folder_names': {
                     "IMAGES": "Images",
                     "DOCUMENTS": "Documents",
@@ -227,7 +387,9 @@ class FileSorter(QWidget):
                     "3D": "3D",
                     "DATABASE": "Database",
                     "SCIENTIFIC": "Scientific",
-                    "SYSTEM": "System"
+                    "SYSTEM": "System",
+                    "UNKNOWN": "Unknown",
+                    "FOLDERS": "Folders"
                 }
             },
             'hu': {
@@ -237,6 +399,13 @@ class FileSorter(QWidget):
                 'confirm_title': "Megerősítés",
                 'confirm_sort': "Biztosan rendezni szeretnéd a fájlokat ebben a mappában?",
                 'confirm_revert': "Biztosan vissza szeretnéd vonni a mappaműveleteket?",
+                'chk_unknown': "ISMERETLEN mappa létrehozása",
+                'chk_folders': "MAPPÁK mappa létrehozása",
+                'menu_language': "Nyelv",
+                'menu_settings': "Beállítások",
+                'menu_about': "Névjegy",
+                'menu_eula': "Általános Szerződési Feltételek (ÁSZF)",
+                'menu_about_app': "A FileOrganizer-ről",
                 'folder_names': {
                     "IMAGES": "Képek",
                     "DOCUMENTS": "Dokumentumok",
@@ -250,11 +419,16 @@ class FileSorter(QWidget):
                     "3D": "3D",
                     "DATABASE": "Adatbázisok",
                     "SCIENTIFIC": "Tudományos",
-                    "SYSTEM": "Rendszerfájlok"
+                    "SYSTEM": "Rendszerfájlok",
+                    "UNKNOWN": "Ismeretlen",
+                    "FOLDERS": "Mappák"
                 }
             }
         }
         self.current_language = 'hu'
+        self.create_unknown = False
+        self.create_folders = False
+        self.load_settings()
 
         self.setWindowTitle("FileOrganizer")
         self.setFixedSize(400, 300)
@@ -282,7 +456,7 @@ class FileSorter(QWidget):
         
         self.btn_open = QPushButton()
         self.btn_open.setObjectName("btn_open")
-        icon_path = os.path.join(os.path.dirname(__file__), 'folder_open.png')
+        icon_path = resource_path('folder_open.png')
         if os.path.exists(icon_path):
              self.btn_open.setIcon(QIcon(icon_path))
         self.btn_open.setIconSize(QSize(20, 20))
@@ -328,7 +502,7 @@ class FileSorter(QWidget):
     def create_menu_bar(self):
         menu_bar = QMenuBar(self) 
         
-        lang_menu = menu_bar.addMenu("Language")
+        self.lang_menu = menu_bar.addMenu("Language")
         
         lang_group = QActionGroup(self)
         lang_group.setExclusive(True)
@@ -336,19 +510,54 @@ class FileSorter(QWidget):
         self.act_en = QAction("English - US", self)
         self.act_en.setCheckable(True)
         self.act_en.triggered.connect(lambda: self.change_language('en'))
-        lang_menu.addAction(self.act_en)
+        self.lang_menu.addAction(self.act_en)
         lang_group.addAction(self.act_en)
         
         self.act_hu = QAction("Hungarian - HU", self)
         self.act_hu.setCheckable(True)
         self.act_hu.triggered.connect(lambda: self.change_language('hu'))
-        lang_menu.addAction(self.act_hu)
+        self.lang_menu.addAction(self.act_hu)
         lang_group.addAction(self.act_hu)
         
         if self.current_language == 'en':
             self.act_en.setChecked(True)
         else:
             self.act_hu.setChecked(True)
+
+        # --- Settings Menu ---
+        self.settings_menu = menu_bar.addMenu("Settings")
+        
+        self.act_unknown = QAction("Create UNKNOWN folder", self)
+        self.act_unknown.setCheckable(True)
+        self.act_unknown.setChecked(self.create_unknown)
+        self.act_unknown.triggered.connect(self.toggle_unknown)
+        self.settings_menu.addAction(self.act_unknown)
+        
+        self.act_folders = QAction("Create FOLDERS folder", self)
+        self.act_folders.setCheckable(True)
+        self.act_folders.setChecked(self.create_folders)
+        self.act_folders.triggered.connect(self.toggle_folders)
+        self.settings_menu.addAction(self.act_folders)
+
+        self.about_menu = menu_bar.addMenu("About")
+        
+        self.eula_action = QAction("End User License Agreement (EULA)", self)
+        self.eula_action.setMenuRole(QAction.MenuRole.NoRole)
+        self.eula_action.triggered.connect(self.show_eula)
+        self.about_menu.addAction(self.eula_action)
+        
+        self.about_action = QAction("About FileOrganizer", self)
+        self.about_action.setMenuRole(QAction.MenuRole.AboutRole)
+        self.about_action.triggered.connect(self.show_about)
+        self.about_menu.addAction(self.about_action)
+
+    def show_eula(self):
+        eula_win = EULAWindow(view_only=True)
+        eula_win.exec()
+
+    def show_about(self):
+        about_win = AboutWindow()
+        about_win.exec()
 
     def eventFilter(self, source, event):
         if source is self.path_input and event.type() == QEvent.Type.MouseButtonPress:
@@ -370,6 +579,16 @@ class FileSorter(QWidget):
         self.path_input.setPlaceholderText(lang_texts['placeholder_text'])
         self.btn_sort.setText(lang_texts['sort_btn'])
         self.btn_revert.setText(lang_texts['revert_btn'])
+        
+        # Update Menu Items
+        self.lang_menu.setTitle(lang_texts['menu_language'])
+        self.settings_menu.setTitle(lang_texts['menu_settings'])
+        self.about_menu.setTitle(lang_texts['menu_about'])
+        
+        self.act_unknown.setText(lang_texts['chk_unknown'])
+        self.act_folders.setText(lang_texts['chk_folders'])
+        self.eula_action.setText(lang_texts['menu_eula'])
+        self.about_action.setText(lang_texts['menu_about_app'])
 
     def select_folder(self):
         folder = QFileDialog.getExistingDirectory(None, "Válassz mappát", "", QFileDialog.Option.ShowDirsOnly)
@@ -410,6 +629,9 @@ class FileSorter(QWidget):
             _, ext = os.path.splitext(filename)
             dest_dir_name = extension_to_folder.get(ext.lower())
 
+            if not dest_dir_name and self.create_unknown:
+                dest_dir_name = translated_folder_names['UNKNOWN']
+
             if dest_dir_name:
                 dest_dir = os.path.join(source_dir, dest_dir_name)
                 
@@ -423,7 +645,34 @@ class FileSorter(QWidget):
                 except Exception as e:
                     print(f"Error moving {filename}: {e}")
         
-        QMessageBox.information(self, "Done", f"Sorting complete. Moved {moved_count} files.")
+        if self.create_folders:
+            folders_dest_name = translated_folder_names['FOLDERS']
+            folders_dest_path = os.path.join(source_dir, folders_dest_name)
+            
+            if not os.path.exists(folders_dest_path):
+                os.makedirs(folders_dest_path)
+
+            dirs_in_source = [d for d in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, d))]
+
+            target_folders = set(translated_folder_names.values())
+            
+            for dir_name in dirs_in_source:
+                if dir_name not in target_folders:
+                    source_path = os.path.join(source_dir, dir_name)
+                    dest_path = os.path.join(folders_dest_path, dir_name)
+                    try:
+                        shutil.move(source_path, dest_path)
+                        moved_count += 1 # Counting folders as moved items too
+                    except Exception as e:
+                        print(f"Error moving folder {dir_name}: {e}")
+            
+            if not os.listdir(folders_dest_path):
+                try:
+                    os.rmdir(folders_dest_path)
+                except:
+                    pass
+
+        QMessageBox.information(self, "Done", f"Sorting complete. Moved {moved_count} items.")
 
 
     def revert_files(self):
@@ -467,9 +716,66 @@ class FileSorter(QWidget):
         
         QMessageBox.information(self, "Done", f"Revert complete. Moved back {reverted_count} files.")
 
+    def toggle_unknown(self, checked):
+        self.create_unknown = checked
+        self.save_settings()
+
+    def toggle_folders(self, checked):
+        self.create_folders = checked
+        self.save_settings()
+
+    def load_settings(self):
+        settings_path = get_settings_path()
+        if os.path.exists(settings_path):
+            with open(settings_path, 'r') as f:
+                try:
+                    settings = json.load(f)
+                    self.create_unknown = settings.get('create_unknown', False)
+                    self.create_folders = settings.get('create_folders', False)
+                except json.JSONDecodeError:
+                    pass
+
+    def save_settings(self):
+        settings_path = get_settings_path()
+        settings = {}
+        if os.path.exists(settings_path):
+            with open(settings_path, 'r') as f:
+                try:
+                    settings = json.load(f)
+                except json.JSONDecodeError:
+                    pass
+        
+        settings['create_unknown'] = self.create_unknown
+        settings['create_folders'] = self.create_folders
+        
+        with open(settings_path, 'w') as f:
+            json.dump(settings, f, indent=4)
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setOrganizationName("VISALP")
+    app.setApplicationName("FileOrganizer")
     app.setStyleSheet(STYLE_SHEET)
-    ex = FileSorter()
-    ex.show()
-    sys.exit(app.exec())
+    
+    settings_path = get_settings_path()
+    eula_accepted = False
+    if os.path.exists(settings_path):
+        with open(settings_path, 'r') as f:
+            try:
+                settings = json.load(f)
+                eula_accepted = settings.get('eula_accepted', False)
+            except:
+                pass
+    
+    if not eula_accepted:
+        eula_win = EULAWindow()
+        if eula_win.exec() == QDialog.DialogCode.Accepted:
+            ex = FileSorter()
+            ex.show()
+            sys.exit(app.exec())
+        else:
+            sys.exit()
+    else:
+        ex = FileSorter()
+        ex.show()
+        sys.exit(app.exec())

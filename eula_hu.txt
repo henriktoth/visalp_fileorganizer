@@ -1,0 +1,25 @@
+ÁLTALÁNOS SZERZŐDÉSI FELTÉTELEK (ÁSZF)
+
+Utolsó frissítés: 2025. 12. 18.
+
+Jelen Általános Szerződési Feltételek („ÁSZF”) jogi megállapodás Ön (mint magánszemély vagy jogi személy) és Tóth Henrik, a VISALP alapítója („Szerző”) között a FileOrganizer szoftvertermékre („Szoftver”) vonatkozóan.
+
+A Szoftver telepítésével, másolásával vagy egyéb módon történő használatával Ön magára nézve kötelezőnek ismeri el jelen ÁSZF feltételeit. Ha nem ért egyet jelen ÁSZF feltételeivel, ne telepítse és ne használja a Szoftvert.
+
+1. A LICENC MEGADÁSA A Szerző visszavonható, nem kizárólagos, nem átruházható, korlátozott licencet biztosít Önnek a Szoftver letöltésére, telepítésére és használatára, kizárólag személyes, nem kereskedelmi célokra, szigorúan jelen ÁSZF feltételeivel összhangban.
+
+2. FELHASZNÁLÁSI KORLÁTOZÁSOK Ön vállalja, hogy nem teszi a következőket, és másoknak sem engedélyezi, hogy: a) A Szoftvert licencbe adja, eladja, bérbe adja, lízingelje, terjessze, továbbítsa, hosztolja, kiszervezze, közzétegye vagy egyéb módon kereskedelmileg hasznosítsa, illetve harmadik fél számára elérhetővé tegye. b) A Szoftvert vagy annak bármely részét módosítsa, abból származékos műveket készítsen, visszafejtse (disassemble), dekódolja, fordítsa vagy forráskódját visszaállítsa (reverse engineer).
+
+3. SZELLEMI TULAJDON A Szoftver, beleértve korlátozás nélkül minden szerzői jogot, szabadalmat, védjegyet, üzleti titkot és egyéb szellemi tulajdonjogot, a Szerző kizárólagos tulajdonát képezi és marad.
+
+4. MEGSZŰNÉS Jelen Megállapodás a felmondásig hatályos. Az Ön jelen Megállapodásból eredő jogai a Szerző értesítése nélkül automatikusan megszűnnek, amennyiben Ön nem tesz eleget a Megállapodás bármely feltételének. A Megállapodás megszűnésekor Ön köteles a Szoftver minden használatát beszüntetni, és a Szoftver összes másolatát – legyen az teljes vagy részleges – megsemmisíteni.
+
+5. SZAVATOSSÁG KIZÁRÁSA A SZOFTVER „JELEN ÁLLAPOTÁBAN” („AS IS”) KERÜL ÁTADÁSRA, BÁRMIFÉLE KIFEJEZETT VAGY HALLGATÓLAGOS GARANCIA NÉLKÜL, BELEÉRTVE, DE NEM KIZÁRÓLAGOSAN AZ ELADHATÓSÁGRA, A KONKRÉT CÉLRA VALÓ ALKALMASSÁGRA ÉS A JOGTISZTASÁGRA VONATKOZÓ GARANCIÁKAT. AZ ALKALMAZANDÓ JOG ÁLTAL MEGENGEDETT MAXIMÁLIS MÉRTÉKBEN A SZERZŐ KIZÁR MINDEN, A SZOFTVERRE VONATKOZÓ SZAVATOSSÁGOT.
+
+6. A FELELŐSSÉG KORLÁTOZÁSA A VISALP (VAGY AZ ALAPÍTÓ TÓTH HENRIK) SEMMILYEN KÖRÜLMÉNYEK KÖZÖTT NEM VÁLLAL FELELŐSSÉGET SEMMILYEN KÜLÖNLEGES, VÉLETLENSZERŰ, KÖZVETETT VAGY KÖVETKEZMÉNYES KÁRÉRT (BELEÉRTVE, KORLÁTOZÁS NÉLKÜL, AZ ELMARADT ÜZLETI HASZNOT, AZ ÜZLETMENET MEGSZAKADÁSÁT, AZ ÜZLETI INFORMÁCIÓK ELVESZTÉSÉT VAGY BÁRMELY MÁS ANYAGI VESZTESÉGET), AMELY A TERMÉK HASZNÁLATÁBÓL VAGY A HASZNÁLATRA VALÓ KÉPTELENSÉGBŐL ERED.
+
+KIFEJEZETTEN AZ ADATVESZTÉSRE VONATKOZÓAN: ÖN TUDOMÁSUL VESZI, HOGY EZT A SZOFTVERT A RENDSZERÉN LÉVŐ FÁJLOK MÓDOSÍTÁSÁRA, ÁTHELYEZÉSÉRE ÉS RENDSZEREZÉSÉRE TERVEZTÉK. A SZOFTVER HASZNÁLATÁVAL ÖN ELFOGADJA, HOGY A SZERZŐ NEM TEHETŐ FELELŐSSÉ SEMMILYEN ADATVESZTÉSÉRT, FÁJLKÁROSODÁSÉRT VAGY VÉLETLEN TÖRLÉSÉRT, AMELY A SZOFTVER MŰKÖDÉSE SORÁN BEKÖVETKEZHET. AZ ÖN FELELŐSSÉGE, HOGY A SZOFTVER HASZNÁLATA ELŐTT BIZTONSÁGI MENTÉST KÉSZÍTSEN ADATAIRÓL.
+
+7. ALKALMAZANDÓ JOG Jelen Megállapodásra Magyarország törvényei az irányadók, és azokkal összhangban kell értelmezni.
+
+8. NYELVEZET Jelen Megállapodás angol és magyar nyelven készült. A két változat közötti bármely ellentmondás vagy eltérés esetén az angol nyelvű változat az irányadó és kötelező érvényű.
